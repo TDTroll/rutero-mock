@@ -148,10 +148,37 @@ def _next_seq_locked():
     return _seq
 
 
+# Campos del estado que el cliente Android parsea como Int. Si llega un float
+# (p.ej. de una prueba manual), lo forzamos a int: una sola respuesta invalida
+# rompe el parseo del cliente y, al no hacer ack, atasca la cola para siempre.
+_INT_STATE_KEYS = ("fontScale", "scrollOffset")
+
+
+def _sanitize_state(state):
+    if not isinstance(state, dict):
+        return state
+    clean = dict(state)
+    for key in _INT_STATE_KEYS:
+        if key not in clean:
+            continue
+        value = clean[key]
+        if isinstance(value, bool):
+            continue
+        if isinstance(value, float):
+            clean[key] = int(round(value))
+        elif isinstance(value, str):
+            try:
+                clean[key] = int(float(value))
+            except ValueError:
+                clean.pop(key, None)
+    return clean
+
+
 def _enqueue_state_locked(state):
     """Encola un delta de estado. Si el ultimo pendiente es estado puro, se
     fusiona (los estados son idempotentes); asi las acciones posteriores no se
     pierden ni se reordenan."""
+    state = _sanitize_state(state)
     if not isinstance(state, dict) or not state:
         return None
     if _queue and "actions" not in _queue[-1] and "state" in _queue[-1]:
@@ -307,6 +334,19 @@ def api_resume():
         _paused = False
     print("[web] rotacion reanudada", flush=True)
     return jsonify({"ok": True, "paused": _paused})
+
+
+@app.route("/api/reset", methods=["POST"])
+def api_reset():
+    """Limpia la cola de mods pendientes. Util si un mensaje invalido la atasca
+    (el cliente no hace ack y la cola crece sin fin)."""
+    global _paused, _step_index
+    with _lock:
+        _queue.clear()
+        _paused = False
+        _step_index = 0
+    print("[web] cola limpiada (/api/reset)", flush=True)
+    return jsonify({"ok": True, "pending": len(_queue)})
 
 
 @app.route("/api/mod")
