@@ -248,7 +248,8 @@ def index():
         )
     return Response(
         "<h3>Roadmap mock online</h3>"
-        "<p><a href='/rutero'>Pagina RUTERO (widgets)</a> &middot; "
+        "<p><a href='/rutero'>Menu RUTERO</a> &middot; "
+        "<a href='/rutero/panel'>Panel RUTERO (widgets)</a> &middot; "
         "<a href='/api/state'>/api/state</a></p>"
         f"<pre>{body}</pre>",
         mimetype="text/html",
@@ -256,6 +257,13 @@ def index():
 
 
 @app.route("/rutero")
+@app.route("/rutero/")
+def rutero_menu():
+    return send_from_directory(WEB_DIR, "menu.html")
+
+
+@app.route("/rutero/panel")
+@app.route("/rutero/panel/")
 def rutero_page():
     return send_from_directory(WEB_DIR, "index.html")
 

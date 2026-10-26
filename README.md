@@ -18,7 +18,7 @@ otras modificaciones de UI y un WAR de autenticación sin mezclar su código.
 │       ├── requirements.txt
 │       ├── requirements-windows.txt
 │       ├── serve_windows.py     # Arranque con waitress en Windows
-│       ├── web/                 # Página /rutero y assets
+│       ├── web/                 # Menú /rutero, panel /rutero/panel y assets
 │       └── config/
 │           └── template1.json
 ├── docker-compose.yml           # Entorno local
@@ -46,7 +46,8 @@ contenedor de `rutero`.
 - `POST /api/report` — el MPC80T reporta su estado.
 - `POST /api/push` — la web encola cambios.
 - `GET /api/config` — configuración del dashboard RUTERO.
-- `GET /rutero` — página web con los widgets.
+- `GET /rutero` — menú de módulos.
+- `GET /rutero/panel` — página web con los widgets y el control del RUTERO.
 
 ## Docker local
 

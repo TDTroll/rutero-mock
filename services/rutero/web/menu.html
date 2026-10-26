@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RUTERO - Menú</title>
+<link rel="stylesheet" href="/rutero/static/menu.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="brand">
+      <div class="brand-mark" aria-hidden="true">A</div>
+      <div>
+        <p class="brand-name">AIDRIVER</p>
+        <p class="brand-sub">Sistema de información al pasajero</p>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="menu-title">
+      <p class="eyebrow">Centro de control</p>
+      <h1 id="menu-title">RUTERO</h1>
+      <p class="lead">Selecciona el módulo que quieres abrir.</p>
+    </section>
+
+    <nav class="modules" aria-label="Módulos disponibles">
+      <a class="module" href="/rutero/panel">
+        <span class="module-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <rect x="4" y="11" width="40" height="26" rx="6" stroke="currentColor" stroke-width="2"/>
+            <circle cx="13" cy="19" r="2" fill="currentColor"/>
+            <circle cx="21" cy="19" r="2" fill="currentColor"/>
+            <circle cx="29" cy="19" r="2" fill="currentColor"/>
+            <circle cx="37" cy="19" r="2" fill="currentColor"/>
+            <circle cx="13" cy="27" r="2" fill="currentColor"/>
+            <circle cx="21" cy="27" r="2" fill="currentColor"/>
+            <circle cx="29" cy="27" r="2" fill="currentColor"/>
+            <circle cx="37" cy="27" r="2" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="module-copy">
+          <span class="module-kicker">Módulo</span>
+          <span class="module-title">Control RUTERO</span>
+          <span class="module-desc">Vista del letrero LED, widgets y control del MPC80T.</span>
+        </span>
+        <span class="module-open" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+    </nav>
+
+    <div class="service-status" id="service-status" data-state="loading" role="status" aria-live="polite">
+      <span class="service-dot" aria-hidden="true"></span>
+      <span id="service-status-text">Comprobando servicio…</span>
+    </div>
+
+    <footer class="footer">
+      <span>ACTIA</span>
+      <span>RUTERO · mock online</span>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var box = document.getElementById('service-status');
+      var label = document.getElementById('service-status-text');
+      if (!box || !label) return;
+
+      fetch('/status', { cache: 'no-store' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('status ' + response.status);
+          return response.json();
+        })
+        .then(function (data) {
+          box.dataset.state = 'online';
+          var bits = ['Servicio en línea'];
+          if (data && data.paused) bits.push('rotación en pausa');
+          if (data && data.pending_mods) {
+            var count = data.pending_mods;
+            bits.push(count + ' cambio' + (count === 1 ? '' : 's') + ' pendiente' + (count === 1 ? '' : 's'));
+          }
+          label.textContent = bits.join(' · ');
+        })
+        .catch(function () {
+          box.dataset.state = 'offline';
+          label.textContent = 'Servicio no disponible';
+        });
+    })();
+  </script>
+</body>
+</html>
