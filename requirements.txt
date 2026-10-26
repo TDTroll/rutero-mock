@@ -1,2 +1,4 @@
+# Compatibilidad con el build Python de Render (transitorio).
+# El servicio real usa services/rutero/requirements.txt.
 Flask>=3.0
 gunicorn>=21.2

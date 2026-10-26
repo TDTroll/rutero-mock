@@ -21,25 +21,32 @@ import time
 
 from flask import Flask, Response, jsonify, request, send_file, send_from_directory
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CERT_FILE = os.path.join(BASE_DIR, "cert.pem")
-KEY_FILE = os.path.join(BASE_DIR, "key.pem")
+SERVICE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def _resolve_path(env_name, default):
+    """Permite sobrescribir rutas en Docker/Render sin tocar el codigo."""
+    value = os.environ.get(env_name)
+    if not value:
+        return default
+    if os.path.isabs(value):
+        return value
+    return os.path.join(SERVICE_DIR, value)
+
+
+# Certificados TLS (solo para el servidor de desarrollo/CLI; Render termina TLS).
+CERT_FILE = _resolve_path("RUTERO_CERT_FILE", os.path.join(SERVICE_DIR, "cert.pem"))
+KEY_FILE = _resolve_path("RUTERO_KEY_FILE", os.path.join(SERVICE_DIR, "key.pem"))
 
 # Pagina web que replica los widgets del RUTERO usando la config del template.
-WEB_DIR = os.path.join(BASE_DIR, "rutero")
+WEB_DIR = _resolve_path("RUTERO_WEB_DIR", os.path.join(SERVICE_DIR, "web"))
 STATIC_DIR = os.path.join(WEB_DIR, "static")
-TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
-if not os.path.exists(TEMPLATE_FILE):
-    TEMPLATE_FILE = (
-        "/home/actia/AndroidStudioProjects/AidriverGenerico"
-        "/app/src/main/assets/templates/template1.json"
-    )
-PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
-if not os.path.exists(PENTAGON_FILE):
-    PENTAGON_FILE = (
-        "/home/actia/AndroidStudioProjects/AidriverGenerico"
-        "/app/src/main/res/drawable/pentagon.png"
-    )
+TEMPLATE_FILE = _resolve_path(
+    "RUTERO_TEMPLATE_FILE", os.path.join(SERVICE_DIR, "config", "template1.json")
+)
+PENTAGON_FILE = _resolve_path(
+    "RUTERO_PENTAGON_FILE", os.path.join(WEB_DIR, "pentagon.png")
+)
 
 app = Flask(__name__)
 

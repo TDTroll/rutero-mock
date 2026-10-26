@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+cert.pem
+key.pem
+.git/
+.gitignore
+README.md
+requirements-windows.txt
+serve_windows.py

@@ -1,0 +1,59 @@
+# Entorno local. En Render se usa render.yaml (runtime: docker).
+#
+# El servicio rutero es autocontenido: backend Flask + web + config.
+# Para anadir los servicios futuros (db, ui, auth) se agregan aqui y en
+# services/, sin tocar el contenedor de rutero.
+name: rutero-mock
+
+services:
+  rutero:
+    build:
+      context: ./services/rutero
+      dockerfile: Dockerfile
+    image: rutero-mock:local
+    ports:
+      - "${RUTERO_PORT:-8080}:8080"
+    environment:
+      PORT: "8080"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/status')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Futuro: base de datos compartida.
+  # db:
+  #   image: postgres:17-alpine
+  #   environment:
+  #     POSTGRES_DB: aidriver
+  #     POSTGRES_USER: aidriver
+  #     POSTGRES_PASSWORD: change-me
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+  # Futuro: servicio para otras modificaciones de UI.
+  # ui:
+  #   build:
+  #     context: ./services/ui
+  #   depends_on:
+  #     - db
+  #   restart: unless-stopped
+
+  # Futuro: WAR de autenticacion (Tomcat).
+  # auth:
+  #   image: tomcat:11-jdk21-temurin
+  #   volumes:
+  #     - ./services/auth/target/auth.war:/usr/local/tomcat/webapps/auth.war:ro
+  #   restart: unless-stopped
+
+# volumes:
+#   db-data:
