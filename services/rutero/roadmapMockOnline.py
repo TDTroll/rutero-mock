@@ -19,7 +19,7 @@ import ssl
 import threading
 import time
 
-from flask import Flask, Response, jsonify, request, send_file, send_from_directory
+from flask import Flask, Response, jsonify, redirect, request, send_file, send_from_directory
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CERT_FILE = os.path.join(BASE_DIR, "cert.pem")
@@ -38,6 +38,11 @@ if not os.path.exists(TEMPLATE_FILE):
 UI_JSON_DIR = os.path.join(os.path.dirname(BASE_DIR), "UI Json")
 if not os.path.exists(UI_JSON_DIR):
     UI_JSON_DIR = "/home/actia/Aidriver/UI Json"
+# También buscar en el propio directorio Web
+if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
+    alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
+    if os.path.exists(os.path.join(alt_ui, "full.json")):
+        UI_JSON_DIR = alt_ui
 PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
 if not os.path.exists(PENTAGON_FILE):
     PENTAGON_FILE = (
@@ -46,6 +51,10 @@ if not os.path.exists(PENTAGON_FILE):
     )
 
 app = Flask(__name__)
+
+_current_dashboard_name = None
+_current_dashboard_data = None
+_current_dashboard_lock = threading.Lock()
 
 SCENARIO = [
     {
@@ -233,6 +242,15 @@ def _rotation_loop():
 
 @app.route("/")
 def index():
+    return redirect("/menu")
+
+
+@app.route("/menu")
+@app.route("/menu/")
+def menu_page():
+    menu_path = os.path.join(WEB_DIR, "menu.html")
+    if os.path.exists(menu_path):
+        return send_from_directory(WEB_DIR, "menu.html")
     with _lock:
         body = json.dumps(
             {
@@ -245,16 +263,31 @@ def index():
         )
     return Response(
         "<h3>Roadmap mock online</h3>"
-        "<p><a href='/rutero'>Pagina RUTERO (widgets)</a> &middot; "
+        "<p><a href='/menu/rutero'>Panel RUTERO</a> &middot; "
+        "<a href='/menu/ui'>Seleccionar UI JSON</a> &middot; "
         "<a href='/api/state'>/api/state</a></p>"
         f"<pre>{body}</pre>",
         mimetype="text/html",
     )
 
 
+@app.route("/menu/rutero")
+@app.route("/menu/rutero/")
 @app.route("/rutero")
+@app.route("/rutero/")
+@app.route("/rutero/panel")
+@app.route("/rutero/panel/")
 def rutero_page():
     return send_from_directory(WEB_DIR, "index.html")
+
+
+@app.route("/menu/ui")
+@app.route("/menu/ui/")
+def menu_ui_page():
+    ui_path = os.path.join(WEB_DIR, "ui-select.html")
+    if os.path.exists(ui_path):
+        return send_from_directory(WEB_DIR, "ui-select.html")
+    return send_from_directory(WEB_DIR, "menu.html")
 
 
 @app.route("/rutero/static/<path:filename>")
@@ -320,14 +353,68 @@ def api_ui_json(filename):
 def api_dashboard_remote():
     """Devuelve un JSON de dashboard remoto desde UI Json (full.json/pullman.json)."""
     name = request.args.get("name", "full")
-    safe_name = f"{os.path.basename(name)}.json"
+    base = os.path.basename(name).replace(".json", "")
+    safe_name = f"{base}.json"
     if safe_name not in ("full.json", "pullman.json"):
-        # Permitir solo los existentes por seguridad
         safe_name = "full.json"
     path = os.path.join(UI_JSON_DIR, safe_name)
     if not os.path.exists(path):
         return jsonify({"error": "archivo no encontrado", "name": safe_name}), 404
     return send_file(path, mimetype="application/json")
+
+
+@app.route("/api/dashboard/select", methods=["POST"])
+def api_dashboard_select():
+    """Selecciona un JSON de UI (full/pullman) para aplicarlo online a la app Android."""
+    global _current_dashboard_name, _current_dashboard_data
+    data = request.get_json(force=True, silent=True) or {}
+    name = str(data.get("name") or data.get("dashboard") or "full")
+    base = os.path.basename(name).replace(".json", "")
+    safe_name = f"{base}.json"
+    if safe_name not in ("full.json", "pullman.json"):
+        return jsonify({"error": "solo se permite full.json o pullman.json"}), 400
+    path = os.path.join(UI_JSON_DIR, safe_name)
+    if not os.path.exists(path):
+        return jsonify({"error": "archivo no encontrado", "name": safe_name}), 404
+    try:
+        with open(path, encoding="utf-8") as fh:
+            dashboard_json = json.load(fh)
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+    with _current_dashboard_lock:
+        _current_dashboard_name = base
+        _current_dashboard_data = dashboard_json
+    print(f"[ui-select] dashboard seleccionado: {base}", flush=True)
+    return jsonify({"ok": True, "name": base, "url": f"/api/dashboard/active"})
+
+
+@app.route("/api/dashboard/active")
+def api_dashboard_active():
+    """Devuelve el JSON de dashboard seleccionado online para la app Android."""
+    with _current_dashboard_lock:
+        if _current_dashboard_data is None:
+            # Por defecto usar full.json si existe
+            path = os.path.join(UI_JSON_DIR, "full.json")
+            if os.path.exists(path):
+                try:
+                    with open(path, encoding="utf-8") as fh:
+                        _current_dashboard_data = json.load(fh)
+                    _current_dashboard_name = "full"
+                except Exception:
+                    pass
+        if _current_dashboard_data is None:
+            return jsonify({"error": "no hay dashboard seleccionado"}), 404
+        return jsonify(_current_dashboard_data)
+
+
+@app.route("/api/dashboard/list")
+def api_dashboard_list():
+    items = []
+    for name in ("full.json", "pullman.json"):
+        path = os.path.join(UI_JSON_DIR, name)
+        if os.path.exists(path):
+            items.append({"name": name.replace(".json", ""), "url": f"/api/dashboard/remote?name={name.replace('.json','')}"})
+    return jsonify({"items": items, "active": _current_dashboard_name})
 
 
 @app.route("/api/push", methods=["POST"])
