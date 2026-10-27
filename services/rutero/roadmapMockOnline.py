@@ -21,32 +21,29 @@ import time
 
 from flask import Flask, Response, jsonify, request, send_file, send_from_directory
 
-SERVICE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
-def _resolve_path(env_name, default):
-    """Permite sobrescribir rutas en Docker/Render sin tocar el codigo."""
-    value = os.environ.get(env_name)
-    if not value:
-        return default
-    if os.path.isabs(value):
-        return value
-    return os.path.join(SERVICE_DIR, value)
-
-
-# Certificados TLS (solo para el servidor de desarrollo/CLI; Render termina TLS).
-CERT_FILE = _resolve_path("RUTERO_CERT_FILE", os.path.join(SERVICE_DIR, "cert.pem"))
-KEY_FILE = _resolve_path("RUTERO_KEY_FILE", os.path.join(SERVICE_DIR, "key.pem"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CERT_FILE = os.path.join(BASE_DIR, "cert.pem")
+KEY_FILE = os.path.join(BASE_DIR, "key.pem")
 
 # Pagina web que replica los widgets del RUTERO usando la config del template.
-WEB_DIR = _resolve_path("RUTERO_WEB_DIR", os.path.join(SERVICE_DIR, "web"))
+WEB_DIR = os.path.join(BASE_DIR, "rutero")
 STATIC_DIR = os.path.join(WEB_DIR, "static")
-TEMPLATE_FILE = _resolve_path(
-    "RUTERO_TEMPLATE_FILE", os.path.join(SERVICE_DIR, "config", "template1.json")
-)
-PENTAGON_FILE = _resolve_path(
-    "RUTERO_PENTAGON_FILE", os.path.join(WEB_DIR, "pentagon.png")
-)
+TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
+if not os.path.exists(TEMPLATE_FILE):
+    TEMPLATE_FILE = (
+        "/home/actia/AndroidStudioProjects/AidriverGenerico"
+        "/app/src/main/assets/templates/template1.json"
+    )
+# Archivos UI JSON remotos (para aplicar dashboards desde servidor al estilo rutero)
+UI_JSON_DIR = os.path.join(os.path.dirname(BASE_DIR), "UI Json")
+if not os.path.exists(UI_JSON_DIR):
+    UI_JSON_DIR = "/home/actia/Aidriver/UI Json"
+PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
+if not os.path.exists(PENTAGON_FILE):
+    PENTAGON_FILE = (
+        "/home/actia/AndroidStudioProjects/AidriverGenerico"
+        "/app/src/main/res/drawable/pentagon.png"
+    )
 
 app = Flask(__name__)
 
@@ -248,8 +245,7 @@ def index():
         )
     return Response(
         "<h3>Roadmap mock online</h3>"
-        "<p><a href='/rutero'>Menu RUTERO</a> &middot; "
-        "<a href='/rutero/panel'>Panel RUTERO (widgets)</a> &middot; "
+        "<p><a href='/rutero'>Pagina RUTERO (widgets)</a> &middot; "
         "<a href='/api/state'>/api/state</a></p>"
         f"<pre>{body}</pre>",
         mimetype="text/html",
@@ -257,13 +253,6 @@ def index():
 
 
 @app.route("/rutero")
-@app.route("/rutero/")
-def rutero_menu():
-    return send_from_directory(WEB_DIR, "menu.html")
-
-
-@app.route("/rutero/panel")
-@app.route("/rutero/panel/")
 def rutero_page():
     return send_from_directory(WEB_DIR, "index.html")
 
@@ -315,6 +304,30 @@ def api_config():
             "items": items,
         }
     )
+
+
+@app.route("/api/ui-json/<path:filename>")
+def api_ui_json(filename):
+    """Sirve los archivos JSON de UI para cargar dashboards remotos (igual que rutero)."""
+    safe_name = os.path.basename(filename)
+    path = os.path.join(UI_JSON_DIR, safe_name)
+    if not os.path.exists(path):
+        return jsonify({"error": "archivo no encontrado", "name": safe_name}), 404
+    return send_file(path, mimetype="application/json")
+
+
+@app.route("/api/dashboard/remote")
+def api_dashboard_remote():
+    """Devuelve un JSON de dashboard remoto desde UI Json (full.json/pullman.json)."""
+    name = request.args.get("name", "full")
+    safe_name = f"{os.path.basename(name)}.json"
+    if safe_name not in ("full.json", "pullman.json"):
+        # Permitir solo los existentes por seguridad
+        safe_name = "full.json"
+    path = os.path.join(UI_JSON_DIR, safe_name)
+    if not os.path.exists(path):
+        return jsonify({"error": "archivo no encontrado", "name": safe_name}), 404
+    return send_file(path, mimetype="application/json")
 
 
 @app.route("/api/push", methods=["POST"])
