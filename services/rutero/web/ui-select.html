@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RUTERO - Seleccionar UI JSON</title>
+<link rel="stylesheet" href="/rutero/static/menu.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="brand">
+      <div class="brand-mark" aria-hidden="true">A</div>
+      <div>
+        <p class="brand-name">AIDRIVER</p>
+        <p class="brand-sub">Aplicar dashboard online</p>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="ui-title">
+      <p class="eyebrow">Centro de control</p>
+      <h1 id="ui-title">UI JSON Online</h1>
+      <p class="lead">Selecciona full.json o pullman.json para aplicarlo a la aplicación Android.</p>
+    </section>
+
+    <nav class="modules" aria-label="Dashboards disponibles">
+      <button class="module" data-name="full" id="btn-full">
+        <span class="module-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <rect x="6" y="10" width="36" height="28" rx="6" stroke="currentColor" stroke-width="2"/>
+            <path d="M6 18h36" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </span>
+        <span class="module-copy">
+          <span class="module-kicker">Dashboard</span>
+          <span class="module-title">full.json</span>
+          <span class="module-desc">Configuración completa de dashboards.</span>
+        </span>
+        <span class="module-open" aria-hidden="true">Aplicar</span>
+      </button>
+
+      <button class="module" data-name="pullman" id="btn-pullman">
+        <span class="module-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <rect x="8" y="14" width="32" height="20" rx="4" stroke="currentColor" stroke-width="2"/>
+            <circle cx="16" cy="30" r="2" fill="currentColor"/>
+            <circle cx="32" cy="30" r="2" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="module-copy">
+          <span class="module-kicker">Dashboard</span>
+          <span class="module-title">pullman.json</span>
+          <span class="module-desc">Configuración específica Pullman.</span>
+        </span>
+        <span class="module-open" aria-hidden="true">Aplicar</span>
+      </button>
+    </nav>
+
+    <div class="service-status" id="status" data-state="loading" role="status" aria-live="polite">
+      <span class="service-dot" aria-hidden="true"></span>
+      <span id="status-text">Selecciona un JSON para aplicarlo online.</span>
+    </div>
+
+    <footer class="footer">
+      <a href="/menu" style="color:inherit;text-decoration:none;">← Volver al menú</a>
+      <span>ACTIA</span>
+      <span>RUTERO · mock online</span>
+    </footer>
+  </main>
+
+  <script>
+    (function(){
+      var status = document.getElementById('status');
+      var text = document.getElementById('status-text');
+      function set(s, t){ if(status) status.dataset.state=s; if(text) text.textContent=t; }
+      fetch('/api/dashboard/list', {cache:'no-store'})
+        .then(function(r){return r.json();})
+        .then(function(j){ if(j.active) set('online','Activo: '+j.active+'.json'); })
+        .catch(function(){});
+      document.querySelectorAll('.module[data-name]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var name = btn.getAttribute('data-name');
+          set('loading','Aplicando '+name+'.json...');
+          fetch('/api/dashboard/select', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({name:name})
+          }).then(function(r){return r.json();})
+            .then(function(j){
+              if(j.ok){ set('online','Aplicado '+name+'.json. La app Android puede cargarlo desde /api/dashboard/active'); }
+              else { set('offline', j.error || 'Error'); }
+            })
+            .catch(function(e){ set('offline','Error: '+e.message); });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
