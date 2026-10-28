@@ -22,8 +22,11 @@ if not os.path.exists(TEMPLATE_FILE):
 UI_JSON_DIR = os.path.join(BASE_DIR, "config")
 alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
 candidates = [
+    BASE_DIR,
     os.path.join(BASE_DIR, "config"),
     os.path.join(BASE_DIR, "..", "config"),
+    os.path.join(BASE_DIR, "..", "services", "rutero", "config"),
+    os.path.join(BASE_DIR, "..", "services", "rutero"),
     alt_ui,
     os.path.join(alt_ui, "config"),
     os.path.join(os.path.dirname(BASE_DIR), "UI Json"),
