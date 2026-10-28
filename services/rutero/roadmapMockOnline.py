@@ -45,6 +45,17 @@ app = Flask(__name__)
 _current_dashboard_name = None
 _current_dashboard_data = None
 _current_dashboard_lock = threading.Lock()
+
+# Copiar JSONs si están en config/
+for _n in ("full.json", "pullman.json", "template1.json"):
+    _src = os.path.join(BASE_DIR, "config", _n)
+    _dst = os.path.join(BASE_DIR, _n)
+    if os.path.exists(_src) and not os.path.exists(_dst):
+        try:
+            import shutil
+            shutil.copy2(_src, _dst)
+        except Exception:
+            pass
     {
         "seconds": 8,
         "state": {
