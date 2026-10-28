@@ -20,16 +20,19 @@ if not os.path.exists(TEMPLATE_FILE):
     TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
 
 UI_JSON_DIR = os.path.join(BASE_DIR, "config")
-if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
-    UI_JSON_DIR = os.path.join(os.path.dirname(BASE_DIR), "UI Json")
-if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
-    UI_JSON_DIR = "/home/actia/Aidriver/UI Json"
 alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
-if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")) and os.path.exists(alt_ui):
-    if os.path.exists(os.path.join(alt_ui, "config", "full.json")):
-        UI_JSON_DIR = os.path.join(alt_ui, "config")
-    elif os.path.exists(os.path.join(alt_ui, "full.json")):
-        UI_JSON_DIR = alt_ui
+candidates = [
+    os.path.join(BASE_DIR, "config"),
+    os.path.join(BASE_DIR, "..", "config"),
+    alt_ui,
+    os.path.join(alt_ui, "config"),
+    os.path.join(os.path.dirname(BASE_DIR), "UI Json"),
+    "/home/actia/Aidriver/UI Json",
+]
+for c in candidates:
+    if os.path.exists(os.path.join(c, "full.json")):
+        UI_JSON_DIR = c
+        break
 
 PENTAGON_FILE = os.path.join(WEB_DIR, "pentagon.png")
 if not os.path.exists(PENTAGON_FILE):
