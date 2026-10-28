@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
-"""Mock HTTPS para el Roadmap 192x32 (modo online) con el MPC80T como principal.
-
-Modelo:
-  * El MPC80T reporta su estado actual a POST /api/report -> es el "principal".
-  * GET /api/state (y /roadmap.json) devuelve ese principal para que la web lo
-    adopte.
-  * Las modificaciones de la web llegan a POST /api/push como deltas
-    ({"state": {...}} y/o {"actions": [...]}), se encolan (FIFO, fusionando
-    estados consecutivos) y el MPC80T las consume en orden desde
-    GET /api/mod?since=<ultimo seq aplicado>; el propio `since` es el ack.
-  * Un guion (scenario) opcional sigue rotando y encolando pasos de demo.
-"""
-
+"""Mock HTTPS para el Roadmap 192x32 (modo online) con el MPC80T como principal."""
 import argparse
 import json
 import os
@@ -25,45 +13,33 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CERT_FILE = os.path.join(BASE_DIR, "cert.pem")
 KEY_FILE = os.path.join(BASE_DIR, "key.pem")
 
-# Pagina web que replica los widgets del RUTERO usando la config del template.
-WEB_DIR = os.path.join(BASE_DIR, "rutero")
+WEB_DIR = os.path.join(BASE_DIR, "web")
 STATIC_DIR = os.path.join(WEB_DIR, "static")
-TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
+TEMPLATE_FILE = os.path.join(BASE_DIR, "config", "template1.json")
 if not os.path.exists(TEMPLATE_FILE):
-    TEMPLATE_FILE = (
-        "/home/actia/AndroidStudioProjects/AidriverGenerico"
-        "/app/src/main/assets/templates/template1.json"
-    )
-# Archivos UI JSON remotos (para aplicar dashboards desde servidor al estilo rutero)
-UI_JSON_DIR = os.path.join(os.path.dirname(BASE_DIR), "UI Json")
-if not os.path.exists(UI_JSON_DIR):
+    TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
+
+UI_JSON_DIR = os.path.join(BASE_DIR, "config")
+if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
+    UI_JSON_DIR = os.path.join(os.path.dirname(BASE_DIR), "UI Json")
+if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
     UI_JSON_DIR = "/home/actia/Aidriver/UI Json"
-# Buscar en config/ del servicio
-if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
-    alt_cfg = os.path.join(BASE_DIR, "config")
-    if os.path.exists(os.path.join(alt_cfg, "full.json")):
-        UI_JSON_DIR = alt_cfg
-# También buscar en el propio directorio Web
-if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
-    alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
-    if os.path.exists(os.path.join(alt_ui, "full.json")):
-        UI_JSON_DIR = alt_ui
-    elif os.path.exists(os.path.join(alt_ui, "config")) and os.path.exists(os.path.join(alt_ui, "config", "full.json")):
+alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
+if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")) and os.path.exists(alt_ui):
+    if os.path.exists(os.path.join(alt_ui, "config", "full.json")):
         UI_JSON_DIR = os.path.join(alt_ui, "config")
-PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
+    elif os.path.exists(os.path.join(alt_ui, "full.json")):
+        UI_JSON_DIR = alt_ui
+
+PENTAGON_FILE = os.path.join(WEB_DIR, "pentagon.png")
 if not os.path.exists(PENTAGON_FILE):
-    PENTAGON_FILE = (
-        "/home/actia/AndroidStudioProjects/AidriverGenerico"
-        "/app/src/main/res/drawable/pentagon.png"
-    )
+    PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
 
 app = Flask(__name__)
 
 _current_dashboard_name = None
 _current_dashboard_data = None
 _current_dashboard_lock = threading.Lock()
-
-SCENARIO = [
     {
         "seconds": 8,
         "state": {
