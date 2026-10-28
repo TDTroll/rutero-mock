@@ -363,10 +363,16 @@ def api_dashboard_select():
         return jsonify({"error": "solo se permite full.json o pullman.json"}), 400
     path = os.path.join(UI_JSON_DIR, safe_name)
     if not os.path.exists(path):
-        # intentar directamente en BASE_DIR
         path = os.path.join(BASE_DIR, safe_name)
     if not os.path.exists(path):
-        return jsonify({"error": "archivo no encontrado", "name": safe_name, "dir": UI_JSON_DIR}), 404
+        # buscar en todos
+        for d in [BASE_DIR, os.path.join(BASE_DIR,'config'), os.path.dirname(BASE_DIR)]:
+            p2 = os.path.join(d, safe_name)
+            if os.path.exists(p2):
+                path = p2
+                break
+    if not os.path.exists(path):
+        return jsonify({"error": "archivo no encontrado", "name": safe_name, "dir": UI_JSON_DIR, "base": BASE_DIR}), 404
     try:
         with open(path, encoding="utf-8") as fh:
             dashboard_json = json.load(fh)
