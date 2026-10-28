@@ -38,11 +38,18 @@ if not os.path.exists(TEMPLATE_FILE):
 UI_JSON_DIR = os.path.join(os.path.dirname(BASE_DIR), "UI Json")
 if not os.path.exists(UI_JSON_DIR):
     UI_JSON_DIR = "/home/actia/Aidriver/UI Json"
+# Buscar en config/ del servicio
+if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
+    alt_cfg = os.path.join(BASE_DIR, "config")
+    if os.path.exists(os.path.join(alt_cfg, "full.json")):
+        UI_JSON_DIR = alt_cfg
 # También buscar en el propio directorio Web
 if not os.path.exists(os.path.join(UI_JSON_DIR, "full.json")):
     alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
     if os.path.exists(os.path.join(alt_ui, "full.json")):
         UI_JSON_DIR = alt_ui
+    elif os.path.exists(os.path.join(alt_ui, "config")) and os.path.exists(os.path.join(alt_ui, "config", "full.json")):
+        UI_JSON_DIR = os.path.join(alt_ui, "config")
 PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
 if not os.path.exists(PENTAGON_FILE):
     PENTAGON_FILE = (
