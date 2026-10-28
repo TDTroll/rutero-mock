@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "theme": {
+    "primary": "#FFA6AD0F",
+    "secondary": "#FF473C09",
+    "tertiary": "#FF2F2E00",
+    "font": "ROBOTO"
+  },
+  "dashboards": [
+    {
+      "background": "PULLMAN",
+      "height": 752,
+      "icon": "Speed",
+      "id": "406e00c7-c447-4cbd-a66f-68448078bbdf",
+      "items": [
+        {
+          "height": 180.0,
+          "id": "c238f70c-b049-4e64-b7b7-63e680397836",
+          "offsetX": 105.82042,
+          "offsetY": -29.4206,
+          "scale": 1.3106116,
+          "type": "DATA_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 120.0,
+          "id": "885392d4-07c2-45a2-a7ad-6b7e0f547894",
+          "offsetX": 780.5382,
+          "offsetY": -22.651634,
+          "scale": 1.1611713,
+          "type": "LAT_LONG",
+          "width": 420.0
+        },
+        {
+          "height": 220.0,
+          "id": "54c5abf5-ef3e-47b7-b58d-8c1c2d7853b0",
+          "offsetX": -22.516563,
+          "offsetY": -27.15886,
+          "scale": 0.7771753,
+          "type": "BUTTON_CHANGE_DRIVER",
+          "width": 220.0
+        },
+        {
+          "height": 220.0,
+          "id": "1bca8412-b2ce-45f4-b78c-409b6559f654",
+          "offsetX": 1082.5071,
+          "offsetY": -27.15886,
+          "scale": 0.7771753,
+          "type": "BUTTON_END_TRAVEL",
+          "width": 220.0
+        },
+        {
+          "height": 96.0,
+          "id": "c74b0c53-0b43-4630-aad9-050e4d3baabe",
+          "offsetX": 420.00003,
+          "offsetY": 7.5227203,
+          "scale": 0.84790534,
+          "type": "ACTIA_LOGO",
+          "width": 440.0
+        },
+        {
+          "height": 420.0,
+          "id": "23986b76-331f-42ba-a58d-da8f81c7adb2",
+          "offsetX": 430.0,
+          "offsetY": 152.16908,
+          "scale": 1.0193411,
+          "type": "VELOCITY_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 420.0,
+          "id": "24f9d177-f112-4c3f-be58-b4bec8614e6a",
+          "offsetX": 430.00006,
+          "offsetY": 394.4712,
+          "scale": 0.45455396,
+          "type": "VELOCITY_MAX_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 420.0,
+          "id": "8c5216f8-b9c9-4333-8be6-b6dc2bf3e66f",
+          "offsetX": 741.9244,
+          "offsetY": 214.61221,
+          "scale": 0.97887963,
+          "type": "ODOMETER_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 120.0,
+          "id": "cbd13551-659a-4f9e-b00d-45dc8cad27ee",
+          "offsetX": 820.9971,
+          "offsetY": 50.340378,
+          "scale": 0.8317843,
+          "type": "BRIGHTNESS_PULLMAN",
+          "width": 320.0
+        },
+        {
+          "height": 420.0,
+          "id": "cf5da637-b818-4b7e-85aa-d4ef767a50bd",
+          "offsetX": 113.949905,
+          "offsetY": 214.61221,
+          "scale": 0.97887963,
+          "type": "RPM_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 420.0,
+          "id": "f95432c2-e17e-4c9a-87a4-fe7db059a912",
+          "offsetX": 199.75032,
+          "offsetY": 394.47116,
+          "scale": 0.45455396,
+          "type": "RPM_MAX_PULLMAN",
+          "width": 420.0
+        }
+      ],
+      "title": "AI-DRIVER",
+      "width": 1280
+    },
+    {
+      "background": "GRADIENT",
+      "height": 704,
+      "icon": "Map",
+      "id": "3f8c5b3e-d9d8-4e4e-87ec-c5c09eb241c9",
+      "items": [
+        {
+          "height": 704.0,
+          "id": "faeabd4d-760d-4f2e-927b-80551473400f",
+          "offsetX": 0.0,
+          "offsetY": 0.0,
+          "scale": 1.0,
+          "type": "MAP",
+          "width": 1280.0
+        }
+      ],
+      "title": "GPS",
+      "width": 1280
+    },
+    {
+      "background": "PENTAGON",
+      "height": 704,
+      "icon": "Roadmap",
+      "id": "de730a4f-8ff0-4450-801a-9a5fd115524b",
+      "items": [
+        {
+          "height": 80.0,
+          "id": "cf1d6cbf-1a04-49da-b1e8-06ce3a9a4767",
+          "offsetX": 400.00003,
+          "offsetY": 181.63765,
+          "scale": 2.25923,
+          "type": "ROADMAP_192X32",
+          "width": 480.0
+        },
+        {
+          "height": 80.0,
+          "id": "fbf382a1-f025-45ea-a742-9b2dd1793571",
+          "offsetX": 161.58972,
+          "offsetY": 515.2044,
+          "scale": 1.0,
+          "type": "CONTROL_ORIENTATION",
+          "width": 480.0
+        },
+        {
+          "height": 80.0,
+          "id": "73d8617e-29c9-448c-bbd1-11d233521805",
+          "offsetX": 400.0,
+          "offsetY": 14.179016,
+          "scale": 1.0,
+          "type": "CONTROL_TEXT_EDITOR",
+          "width": 480.0
+        },
+        {
+          "height": 300.0,
+          "id": "26de5f2c-a7fe-4f84-afc9-582048930e54",
+          "offsetX": 794.843,
+          "offsetY": 336.25195,
+          "scale": 0.93330413,
+          "type": "COLOR_PICKER",
+          "width": 280.0
+        },
+        {
+          "height": 80.0,
+          "id": "76c459c3-00fe-4f78-a203-3b0e766596a7",
+          "offsetX": 161.58972,
+          "offsetY": 388.98926,
+          "scale": 1.0,
+          "type": "CONTROL_ANIMATION",
+          "width": 480.0
+        }
+      ],
+      "title": "RUTERO",
+      "width": 1280
+    }
+  ]
+}}
