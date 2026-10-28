@@ -390,7 +390,7 @@ def api_dashboard_active():
     """Devuelve el JSON de dashboard seleccionado online para la app Android."""
     with _current_dashboard_lock:
         if _current_dashboard_data is None:
-            for d in [UI_JSON_DIR, BASE_DIR, os.path.join(BASE_DIR, "config")]:
+            for d in [BASE_DIR, os.path.join(BASE_DIR, "config"), UI_JSON_DIR, os.path.dirname(BASE_DIR)]:
                 path = os.path.join(d, "full.json")
                 if os.path.exists(path):
                     try:
@@ -401,8 +401,11 @@ def api_dashboard_active():
                     except Exception:
                         pass
         if _current_dashboard_data is None:
-            return jsonify({"error": "no hay dashboard seleccionado", "base": BASE_DIR}), 404
-        return jsonify(_current_dashboard_data)
+            return jsonify({"error": "no hay dashboard seleccionado"}), 404
+        try:
+            return jsonify(_current_dashboard_data)
+        except Exception as exc:
+            return jsonify({"error": str(exc)}), 500
 
 
 @app.route("/api/dashboard/list")
