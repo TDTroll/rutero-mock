@@ -376,11 +376,15 @@ def api_dashboard_select():
     if not os.path.exists(path):
         path = os.path.join(BASE_DIR, safe_name)
     if not os.path.exists(path):
-        # buscar en todos
-        for d in [BASE_DIR, os.path.join(BASE_DIR,'config'), os.path.dirname(BASE_DIR)]:
+        for d in [BASE_DIR, os.path.join(BASE_DIR,'config'), os.path.dirname(BASE_DIR), os.path.join(os.path.dirname(BASE_DIR),'web')]:
             p2 = os.path.join(d, safe_name)
             if os.path.exists(p2):
                 path = p2
+                try:
+                    import shutil
+                    shutil.copy2(p2, os.path.join(BASE_DIR, safe_name))
+                except Exception:
+                    pass
                 break
     if not os.path.exists(path):
         return jsonify({"error": "archivo no encontrado", "name": safe_name, "dir": UI_JSON_DIR, "base": BASE_DIR}), 404
