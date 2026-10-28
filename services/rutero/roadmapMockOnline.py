@@ -19,14 +19,13 @@ TEMPLATE_FILE = os.path.join(BASE_DIR, "config", "template1.json")
 if not os.path.exists(TEMPLATE_FILE):
     TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
 
-UI_JSON_DIR = os.path.join(BASE_DIR, "config")
+UI_JSON_DIR = BASE_DIR
 alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
 candidates = [
     BASE_DIR,
     os.path.join(BASE_DIR, "config"),
-    os.path.join(BASE_DIR, "..", "config"),
-    os.path.join(BASE_DIR, "..", "services", "rutero", "config"),
-    os.path.join(BASE_DIR, "..", "services", "rutero"),
+    os.path.join(os.path.dirname(BASE_DIR), "services", "rutero"),
+    os.path.join(os.path.dirname(BASE_DIR), "services", "rutero", "config"),
     alt_ui,
     os.path.join(alt_ui, "config"),
     os.path.join(os.path.dirname(BASE_DIR), "UI Json"),
