@@ -28,49 +28,18 @@ KEY_FILE = os.path.join(BASE_DIR, "key.pem")
 # Pagina web que replica los widgets del RUTERO usando la config del template.
 WEB_DIR = os.path.join(BASE_DIR, "web")
 STATIC_DIR = os.path.join(WEB_DIR, "static")
-TEMPLATE_FILE = os.path.join(BASE_DIR, "config", "template1.json")
-if not os.path.exists(TEMPLATE_FILE):
-    TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
+TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
 
-# Archivos UI JSON remotos (para aplicar dashboards desde servidor al estilo rutero)
+# Archivos UI JSON remotos (full.json / pullman.json junto al servidor).
 UI_JSON_DIR = BASE_DIR
-alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
-candidates = [
-    BASE_DIR,
-    os.path.join(BASE_DIR, "config"),
-    os.path.join(BASE_DIR, "..", "config"),
-    os.path.join(BASE_DIR, "..", "services", "rutero"),
-    os.path.join(BASE_DIR, "..", "services", "rutero", "config"),
-    alt_ui,
-    os.path.join(alt_ui, "config"),
-    os.path.join(os.path.dirname(BASE_DIR), "UI Json"),
-    "/home/actia/Aidriver/UI Json",
-]
-for c in candidates:
-    if os.path.exists(os.path.join(c, "full.json")):
-        UI_JSON_DIR = c
-        break
 
 PENTAGON_FILE = os.path.join(WEB_DIR, "pentagon.png")
-if not os.path.exists(PENTAGON_FILE):
-    PENTAGON_FILE = os.path.join(BASE_DIR, "pentagon.png")
 
 app = Flask(__name__)
 
 _current_dashboard_name = None
 _current_dashboard_data = None
 _current_dashboard_lock = threading.Lock()
-
-# Copiar JSONs si están en config/
-for _n in ("full.json", "pullman.json", "template1.json"):
-    _src = os.path.join(BASE_DIR, "config", _n)
-    _dst = os.path.join(BASE_DIR, _n)
-    if os.path.exists(_src) and not os.path.exists(_dst):
-        try:
-            import shutil
-            shutil.copy2(_src, _dst)
-        except Exception:
-            pass
 
 SCENARIO = [
     {
@@ -407,30 +376,17 @@ def api_dashboard_select():
 @app.route("/api/dashboard/active")
 def api_dashboard_active():
     """Devuelve el JSON de dashboard seleccionado online para la app Android."""
+    global _current_dashboard_name, _current_dashboard_data
     try:
         with _current_dashboard_lock:
-            if _current_dashboard_data is not None:
-                return jsonify(_current_dashboard_data)
-            # Por defecto usar full.json si existe
-            for cand_dir in [
-                UI_JSON_DIR,
-                os.path.join(BASE_DIR, "config"),
-                os.path.join(BASE_DIR),
-                os.path.join(os.path.dirname(BASE_DIR), "Web", "config"),
-                os.path.join(os.path.dirname(BASE_DIR), "Web"),
-                "/home/actia/Aidriver/UI Json",
-            ]:
-                path = os.path.join(cand_dir, "full.json")
-                if os.path.exists(path):
-                    try:
-                        with open(path, encoding="utf-8") as fh:
-                            data = json.load(fh)
-                        globals()['_current_dashboard_data'] = data
-                        globals()['_current_dashboard_name'] = 'full'
-                        return jsonify(data)
-                    except Exception:
-                        continue
-            return jsonify({"error": "no hay dashboard seleccionado"}), 404
+            if _current_dashboard_data is None:
+                path = os.path.join(UI_JSON_DIR, "full.json")
+                if not os.path.exists(path):
+                    return jsonify({"error": "no hay dashboard seleccionado"}), 404
+                with open(path, encoding="utf-8") as fh:
+                    _current_dashboard_data = json.load(fh)
+                _current_dashboard_name = "full"
+            return jsonify(_current_dashboard_data)
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
 
