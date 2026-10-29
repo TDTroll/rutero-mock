@@ -79,14 +79,17 @@
       document.querySelectorAll('.module[data-name]').forEach(function(btn){
         btn.addEventListener('click', function(){
           var name = btn.getAttribute('data-name');
-          set('loading','Aplicando '+name+'.json...');
+          set('loading','Enviando '+name+'.json al Android...');
           fetch('/api/dashboard/select', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body: JSON.stringify({name:name})
           }).then(function(r){return r.json();})
             .then(function(j){
-              if(j.ok){ set('online','Aplicado '+name+'.json. La app Android puede cargarlo desde /api/dashboard/active'); }
+              if(j.ok){
+                set('online','✓ Enviado '+name+'.json al servidor. La app Android lo aplicará automáticamente en unos segundos.');
+                fetch('/api/dashboard/active', {cache:'no-store'}).catch(function(){});
+              }
               else { set('offline', j.error || 'Error'); }
             })
             .catch(function(e){ set('offline','Error: '+e.message); });
