@@ -1,0 +1,496 @@
+{
+  "version": 1,
+  "theme": {
+    "primary": "#FFA6AD0F",
+    "secondary": "#FF473C09",
+    "tertiary": "#FF2F2E00",
+    "font": "ROBOTO"
+  },
+  "dashboards": [
+    {
+      "background": "ROAD",
+      "height": 736,
+      "id": "dashboard_1",
+      "items": [
+        {
+          "height": 440.0,
+          "id": "cd013f04-d8ae-47d0-8365-9c0812afbe52",
+          "offsetX": 72.32141,
+          "offsetY": 64.6599,
+          "scale": 0.42210278,
+          "type": "THERMOMETER_CABIN",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "f8edb9a2-a133-40ff-92ac-1dbd3c63db62",
+          "offsetX": 958.20886,
+          "offsetY": -132.50809,
+          "scale": 0.32367218,
+          "type": "PERCENTAGE_CIRCLE_AREA",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "e4863062-2c5d-4718-848b-10b9f9365be2",
+          "offsetX": 771.15857,
+          "offsetY": 64.6599,
+          "scale": 0.42210278,
+          "type": "THERMOMETER_TRANSMISSION",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "45d9e59a-97b7-4202-a1b5-f7c2b677feab",
+          "offsetX": 419.99997,
+          "offsetY": 130.72504,
+          "scale": 1.3488753,
+          "type": "ANALOG_GAUGE_CIRCULAR_FULL",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "13b460b9-bb9b-466b-a212-35a756e184be",
+          "offsetX": -121.96002,
+          "offsetY": 64.6599,
+          "scale": 0.42210278,
+          "type": "THERMOMETER_ENGINE",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "cea4561f-d85b-48a8-8d6a-2e9fa13b7de1",
+          "offsetX": 420.0,
+          "offsetY": -170.51978,
+          "scale": 0.5114978,
+          "type": "CLOCK_TEXT",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "2f608f33-3cc2-4390-8f82-79f578f81659",
+          "offsetX": -35.254562,
+          "offsetY": 286.8294,
+          "scale": 0.96336293,
+          "type": "ANALOG_GAUGE_CIRCULAR_FULL_RPM",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "21e05e9a-6ac2-4968-9cab-26d2a7a8138b",
+          "offsetX": 308.05426,
+          "offsetY": 393.19376,
+          "scale": 0.22258578,
+          "type": "BOOLEAN_AIRBAG",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "5edc855e-9300-46be-be1d-967edda381f8",
+          "offsetX": 420.0,
+          "offsetY": 99.57199,
+          "scale": 0.46641153,
+          "type": "DIGITAL_SPEED",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "e982cee0-7a7b-4596-8cf7-6c9150196eda",
+          "offsetX": 420.0,
+          "offsetY": 251.263,
+          "scale": 0.36790225,
+          "type": "THREED",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "d505d910-dafe-4cf6-a5fa-3cff956ee338",
+          "offsetX": 420.00003,
+          "offsetY": 393.19415,
+          "scale": 0.22258578,
+          "type": "BOOLEAN_SEATBELT",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "1f8cb684-c6a7-4f00-a883-ee3153ecb6fa",
+          "offsetX": 196.10855,
+          "offsetY": 393.19373,
+          "scale": 0.22258565,
+          "type": "BOOLEAN_PARKING",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "183314ab-cc43-4381-9dfa-7f9627fe424b",
+          "offsetX": 531.9457,
+          "offsetY": 393.19382,
+          "scale": 0.22258578,
+          "type": "BOOLEAN_HOOD",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "8b2b3c9f-a067-410f-bfe7-0775578fb5b3",
+          "offsetX": 643.89136,
+          "offsetY": 393.19354,
+          "scale": 0.22258578,
+          "type": "BOOLEAN_DISC_BRAKE",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "76f77b96-893f-45ef-9cfb-7fef9d6e1f98",
+          "offsetX": 873.67944,
+          "offsetY": 286.82944,
+          "scale": 0.96336305,
+          "type": "ANALOG_GAUGE_CIRCULAR_FULL_FUEL",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "2f65f4f9-b655-41a8-8c6c-92ad88a51220",
+          "offsetX": 965.44,
+          "offsetY": 64.65988,
+          "scale": 0.42210278,
+          "type": "THERMOMETER_ANTIFREEZE",
+          "width": 440.0
+        }
+      ],
+      "title": "HMI",
+      "width": 1280
+    },
+    {
+      "background": "GRADIENT",
+      "height": 704,
+      "id": "f46e7e1b-5993-4158-8326-6e9b84f9d084",
+      "items": [
+        {
+          "height": 440.0,
+          "id": "38e5c372-41e8-412e-8f79-8346779df198",
+          "offsetX": 271.29672,
+          "offsetY": -119.03833,
+          "scale": 0.53163147,
+          "type": "BUTTON_BAGGAGE_STORAGE",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "9775733c-1d60-40ec-a2df-1bf478e87132",
+          "offsetX": 565.8263,
+          "offsetY": 131.49185,
+          "scale": 0.5316316,
+          "type": "BUTTON_AIR_CONDITION",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "88e0c60f-9dec-4b44-b891-7d6e2defbacb",
+          "offsetX": 267.69086,
+          "offsetY": 132.21375,
+          "scale": 0.53163147,
+          "type": "BUTTON_CAR_LIGHTS",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "43db71e5-77b3-4efb-b826-7558d2887dec",
+          "offsetX": 236.89337,
+          "offsetY": 358.54868,
+          "scale": 0.3458599,
+          "type": "BOOLEAN_SEATBELT",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "38cdf708-4fd0-4c43-af9d-a194670f5bb4",
+          "offsetX": -129.31992,
+          "offsetY": 358.54855,
+          "scale": 0.34585974,
+          "type": "BOOLEAN_PARKING",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "88bfcb17-80d7-4f73-b7ef-b9f0892544dd",
+          "offsetX": 420.0,
+          "offsetY": 358.54868,
+          "scale": 0.3458599,
+          "type": "BOOLEAN_BRAKE",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "a4c8a78c-0df7-4349-b5bf-1218393cd6ed",
+          "offsetX": 53.786835,
+          "offsetY": 358.54874,
+          "scale": 0.34585974,
+          "type": "BOOLEAN_AIRBAG",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "f3f4075a-c5a7-4b87-a552-5e931b434786",
+          "offsetX": 969.3199,
+          "offsetY": 358.5487,
+          "scale": 0.3458599,
+          "type": "BOOLEAN_DOOR",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "49035daa-0b98-41ea-9023-035398bce835",
+          "offsetX": 603.1066,
+          "offsetY": 358.54868,
+          "scale": 0.3458599,
+          "type": "BOOLEAN_HOOD",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "c2e029fd-e6a0-47b1-8e7a-e054a0c0613f",
+          "offsetX": 786.21326,
+          "offsetY": 358.54868,
+          "scale": 0.3458598,
+          "type": "BOOLEAN_DISC_BRAKE",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "55fc09b4-d9ac-4fc4-a085-ee0d74b86651",
+          "offsetX": -15.706482,
+          "offsetY": 130.76996,
+          "scale": 0.53163147,
+          "type": "BUTTON_PASSENGER_LIGHT",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "2518cd0f-9a53-4b47-9493-ba03a9d4f37a",
+          "offsetX": 858.375,
+          "offsetY": 131.37152,
+          "scale": 0.53163147,
+          "type": "BUTTON_SUSPENSION",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "9bed2ccb-99c6-46e8-a316-19be19592217",
+          "offsetX": 565.42993,
+          "offsetY": -118.79773,
+          "scale": 0.53163147,
+          "type": "BUTTON_FAN",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "9395fc54-26c6-4138-991e-d8cb5463ebea",
+          "offsetX": 858.375,
+          "offsetY": -119.27893,
+          "scale": 0.53163147,
+          "type": "BUTTON_DOOR_BUS",
+          "width": 440.0
+        },
+        {
+          "height": 440.0,
+          "id": "0df3ef4b-57c4-4132-b3c6-c7b83ea26b00",
+          "offsetX": -16.102844,
+          "offsetY": -118.91803,
+          "scale": 0.53163147,
+          "type": "BUTTON_WINDSHIELD",
+          "width": 440.0
+        }
+      ],
+      "title": "FUNCIONES",
+      "width": 1280
+    },
+    {
+      "background": "GRADIENT",
+      "height": 704,
+      "id": "3f8c5b3e-d9d8-4e4e-87ec-c5c09eb241c9",
+      "items": [
+        {
+          "height": 704.0,
+          "id": "faeabd4d-760d-4f2e-927b-80551473400f",
+          "offsetX": 0.0,
+          "offsetY": 0.0,
+          "scale": 1.0,
+          "type": "MAP",
+          "width": 1280.0
+        }
+      ],
+      "title": "GPS",
+      "width": 1280
+    },
+    {
+      "background": "PENTAGON",
+      "height": 704,
+      "id": "de730a4f-8ff0-4450-801a-9a5fd115524b",
+      "items": [
+        {
+          "height": 80.0,
+          "id": "cf1d6cbf-1a04-49da-b1e8-06ce3a9a4767",
+          "offsetX": 400.00003,
+          "offsetY": 181.63765,
+          "scale": 2.25923,
+          "type": "ROADMAP_192X32",
+          "width": 480.0
+        },
+        {
+          "height": 80.0,
+          "id": "fbf382a1-f025-45ea-a742-9b2dd1793571",
+          "offsetX": 161.58972,
+          "offsetY": 515.2044,
+          "scale": 1.0,
+          "type": "CONTROL_ORIENTATION",
+          "width": 480.0
+        },
+        {
+          "height": 80.0,
+          "id": "73d8617e-29c9-448c-bbd1-11d233521805",
+          "offsetX": 400.0,
+          "offsetY": 14.179016,
+          "scale": 1.0,
+          "type": "CONTROL_TEXT_EDITOR",
+          "width": 480.0
+        },
+        {
+          "height": 300.0,
+          "id": "26de5f2c-a7fe-4f84-afc9-582048930e54",
+          "offsetX": 794.843,
+          "offsetY": 336.25195,
+          "scale": 0.93330413,
+          "type": "COLOR_PICKER",
+          "width": 280.0
+        },
+        {
+          "height": 80.0,
+          "id": "76c459c3-00fe-4f78-a203-3b0e766596a7",
+          "offsetX": 161.58972,
+          "offsetY": 388.98926,
+          "scale": 1.0,
+          "type": "CONTROL_ANIMATION",
+          "width": 480.0
+        }
+      ],
+      "title": "RUTERO",
+      "width": 1280
+    },
+    {
+      "background": "MOUNTAINS",
+      "height": 704,
+      "id": "bd6d3c32-c91f-4ded-be32-26a97bf11dc4",
+      "items": [],
+      "title": "NVR 360",
+      "width": 1280
+    },
+    {
+      "background": "PULLMAN",
+      "height": 752,
+      "id": "406e00c7-c447-4cbd-a66f-68448078bbdf",
+      "items": [
+        {
+          "height": 180.0,
+          "id": "c238f70c-b049-4e64-b7b7-63e680397836",
+          "offsetX": 114.591934,
+          "offsetY": -8.870056,
+          "scale": 1.3106116,
+          "type": "DATA_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 120.0,
+          "id": "885392d4-07c2-45a2-a7ad-6b7e0f547894",
+          "offsetX": 770.63696,
+          "offsetY": -16.440987,
+          "scale": 1.0193411,
+          "type": "LAT_LONG",
+          "width": 420.0
+        },
+        {
+          "height": 220.0,
+          "id": "54c5abf5-ef3e-47b7-b58d-8c1c2d7853b0",
+          "offsetX": -22.516563,
+          "offsetY": -27.15886,
+          "scale": 0.7771753,
+          "type": "BUTTON_CHANGE_DRIVER",
+          "width": 220.0
+        },
+        {
+          "height": 220.0,
+          "id": "1bca8412-b2ce-45f4-b78c-409b6559f654",
+          "offsetX": 1082.5071,
+          "offsetY": -27.15886,
+          "scale": 0.7771753,
+          "type": "BUTTON_END_TRAVEL",
+          "width": 220.0
+        },
+        {
+          "height": 96.0,
+          "id": "c74b0c53-0b43-4630-aad9-050e4d3baabe",
+          "offsetX": 420.00003,
+          "offsetY": 7.5227203,
+          "scale": 0.84790534,
+          "type": "ACTIA_LOGO",
+          "width": 440.0
+        },
+        {
+          "height": 420.0,
+          "id": "23986b76-331f-42ba-a58d-da8f81c7adb2",
+          "offsetX": 430.0,
+          "offsetY": 152.16908,
+          "scale": 1.0193411,
+          "type": "VELOCITY_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 420.0,
+          "id": "24f9d177-f112-4c3f-be58-b4bec8614e6a",
+          "offsetX": 430.00006,
+          "offsetY": 394.4712,
+          "scale": 0.45455396,
+          "type": "VELOCITY_MAX_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 420.0,
+          "id": "8c5216f8-b9c9-4333-8be6-b6dc2bf3e66f",
+          "offsetX": 741.9244,
+          "offsetY": 214.61221,
+          "scale": 0.97887963,
+          "type": "ODOMETER_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 120.0,
+          "id": "cbd13551-659a-4f9e-b00d-45dc8cad27ee",
+          "offsetX": 820.9971,
+          "offsetY": 50.340378,
+          "scale": 0.8317843,
+          "type": "BRIGHTNESS_PULLMAN",
+          "width": 320.0
+        },
+        {
+          "height": 420.0,
+          "id": "cf5da637-b818-4b7e-85aa-d4ef767a50bd",
+          "offsetX": 113.949905,
+          "offsetY": 214.61221,
+          "scale": 0.97887963,
+          "type": "RPM_PULLMAN",
+          "width": 420.0
+        },
+        {
+          "height": 420.0,
+          "id": "f95432c2-e17e-4c9a-87a4-fe7db059a912",
+          "offsetX": 199.75032,
+          "offsetY": 394.47116,
+          "scale": 0.45455396,
+          "type": "RPM_MAX_PULLMAN",
+          "width": 420.0
+        }
+      ],
+      "title": "AI-DRIVER",
+      "width": 1280
+    }
+  ]
+}
