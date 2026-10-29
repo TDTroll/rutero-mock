@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
-"""Mock HTTPS para el Roadmap 192x32 (modo online) con el MPC80T como principal."""
+"""Mock HTTPS para el Roadmap 192x32 (modo online) con el MPC80T como principal.
+
+Modelo:
+  * El MPC80T reporta su estado actual a POST /api/report -> es el "principal".
+  * GET /api/state (y /roadmap.json) devuelve ese principal para que la web lo
+    adopte.
+  * Las modificaciones de la web llegan a POST /api/push como deltas
+    ({"state": {...}} y/o {"actions": [...]}), se encolan (FIFO, fusionando
+    estados consecutivos) y el MPC80T las consume en orden desde
+    GET /api/mod?since=<ultimo seq aplicado>; el propio `since` es el ack.
+  * Un guion (scenario) opcional sigue rotando y encolando pasos de demo.
+"""
+
 import argparse
 import json
 import os
@@ -13,19 +25,22 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CERT_FILE = os.path.join(BASE_DIR, "cert.pem")
 KEY_FILE = os.path.join(BASE_DIR, "key.pem")
 
+# Pagina web que replica los widgets del RUTERO usando la config del template.
 WEB_DIR = os.path.join(BASE_DIR, "web")
 STATIC_DIR = os.path.join(WEB_DIR, "static")
 TEMPLATE_FILE = os.path.join(BASE_DIR, "config", "template1.json")
 if not os.path.exists(TEMPLATE_FILE):
     TEMPLATE_FILE = os.path.join(BASE_DIR, "template1.json")
 
+# Archivos UI JSON remotos (para aplicar dashboards desde servidor al estilo rutero)
 UI_JSON_DIR = BASE_DIR
 alt_ui = os.path.join(os.path.dirname(BASE_DIR), "Web")
 candidates = [
     BASE_DIR,
     os.path.join(BASE_DIR, "config"),
-    os.path.join(os.path.dirname(BASE_DIR), "services", "rutero"),
-    os.path.join(os.path.dirname(BASE_DIR), "services", "rutero", "config"),
+    os.path.join(BASE_DIR, "..", "config"),
+    os.path.join(BASE_DIR, "..", "services", "rutero"),
+    os.path.join(BASE_DIR, "..", "services", "rutero", "config"),
     alt_ui,
     os.path.join(alt_ui, "config"),
     os.path.join(os.path.dirname(BASE_DIR), "UI Json"),
@@ -56,6 +71,8 @@ for _n in ("full.json", "pullman.json", "template1.json"):
             shutil.copy2(_src, _dst)
         except Exception:
             pass
+
+SCENARIO = [
     {
         "seconds": 8,
         "state": {
@@ -374,20 +391,7 @@ def api_dashboard_select():
         return jsonify({"error": "solo se permite full.json o pullman.json"}), 400
     path = os.path.join(UI_JSON_DIR, safe_name)
     if not os.path.exists(path):
-        path = os.path.join(BASE_DIR, safe_name)
-    if not os.path.exists(path):
-        for d in [BASE_DIR, os.path.join(BASE_DIR,'config'), os.path.dirname(BASE_DIR), os.path.join(os.path.dirname(BASE_DIR),'web')]:
-            p2 = os.path.join(d, safe_name)
-            if os.path.exists(p2):
-                path = p2
-                try:
-                    import shutil
-                    shutil.copy2(p2, os.path.join(BASE_DIR, safe_name))
-                except Exception:
-                    pass
-                break
-    if not os.path.exists(path):
-        return jsonify({"error": "archivo no encontrado", "name": safe_name, "dir": UI_JSON_DIR, "base": BASE_DIR}), 404
+        return jsonify({"error": "archivo no encontrado", "name": safe_name}), 404
     try:
         with open(path, encoding="utf-8") as fh:
             dashboard_json = json.load(fh)
@@ -405,22 +409,18 @@ def api_dashboard_active():
     """Devuelve el JSON de dashboard seleccionado online para la app Android."""
     with _current_dashboard_lock:
         if _current_dashboard_data is None:
-            for d in [BASE_DIR, os.path.join(BASE_DIR, "config"), UI_JSON_DIR, os.path.dirname(BASE_DIR)]:
-                path = os.path.join(d, "full.json")
-                if os.path.exists(path):
-                    try:
-                        with open(path, encoding="utf-8") as fh:
-                            _current_dashboard_data = json.load(fh)
-                        _current_dashboard_name = "full"
-                        break
-                    except Exception:
-                        pass
+            # Por defecto usar full.json si existe
+            path = os.path.join(UI_JSON_DIR, "full.json")
+            if os.path.exists(path):
+                try:
+                    with open(path, encoding="utf-8") as fh:
+                        _current_dashboard_data = json.load(fh)
+                    _current_dashboard_name = "full"
+                except Exception:
+                    pass
         if _current_dashboard_data is None:
             return jsonify({"error": "no hay dashboard seleccionado"}), 404
-        try:
-            return jsonify(_current_dashboard_data)
-        except Exception as exc:
-            return jsonify({"error": str(exc)}), 500
+        return jsonify(_current_dashboard_data)
 
 
 @app.route("/api/dashboard/list")
