@@ -5,6 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RUTERO - Seleccionar UI JSON</title>
 <link rel="stylesheet" href="/rutero/static/menu.css">
+<style>
+  .dropzone {
+    display: block;
+    margin-top: 18px;
+    padding: clamp(22px, 4vw, 34px);
+    text-align: center;
+    cursor: pointer;
+    color: inherit;
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .dropzone:hover,
+  .dropzone:focus-within,
+  .dropzone.dragover {
+    border-color: rgba(255, 167, 38, 0.65);
+    background: rgba(255, 167, 38, 0.1);
+  }
+  .dropzone-title { display: block; font-weight: 600; }
+  .dropzone-sub { display: block; margin-top: 6px; font-size: 0.9em; opacity: 0.7; }
+</style>
 </head>
 <body>
   <main class="shell">
@@ -55,6 +77,12 @@
       </button>
     </nav>
 
+    <label class="dropzone" id="dropzone">
+      <input type="file" id="file-input" accept=".json,application/json" hidden>
+      <span class="dropzone-title">Arrastra aquí un JSON</span>
+      <span class="dropzone-sub">o haz clic para elegir un archivo</span>
+    </label>
+
     <div class="service-status" id="status" data-state="loading" role="status" aria-live="polite">
       <span class="service-dot" aria-hidden="true"></span>
       <span id="status-text">Selecciona un JSON para aplicarlo online.</span>
@@ -76,6 +104,40 @@
         .then(function(r){return r.json();})
         .then(function(j){ if(j.active) set('online','Activo: '+j.active+'.json'); })
         .catch(function(){});
+      var dropzone = document.getElementById('dropzone');
+      var fileInput = document.getElementById('file-input');
+      function uploadFile(file){
+        if(!file) return;
+        if(!/\.json$/i.test(file.name) && file.type !== 'application/json'){
+          set('offline','Selecciona un archivo .json'); return;
+        }
+        set('loading','Subiendo '+file.name+'...');
+        var form = new FormData();
+        form.append('file', file, file.name);
+        fetch('/api/dashboard/upload', {method:'POST', body: form})
+          .then(function(r){
+            return r.json().catch(function(){ return {error:'respuesta invalida ('+r.status+')'}; });
+          })
+          .then(function(j){
+            if(j.ok) set('online','✓ '+j.name+'.json aplicado. La app Android lo aplicará automáticamente en unos segundos.');
+            else set('offline', j.error || 'Error');
+          })
+          .catch(function(e){ set('offline','Error: '+e.message); });
+      }
+      fileInput.addEventListener('change', function(){
+        uploadFile(fileInput.files[0]);
+        fileInput.value = '';
+      });
+      ['dragenter','dragover'].forEach(function(ev){
+        dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('dragover'); });
+      });
+      ['dragleave','drop'].forEach(function(ev){
+        dropzone.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('dragover'); });
+      });
+      dropzone.addEventListener('drop', function(e){ uploadFile(e.dataTransfer.files[0]); });
+      window.addEventListener('dragover', function(e){ e.preventDefault(); });
+      window.addEventListener('drop', function(e){ e.preventDefault(); });
+
       document.querySelectorAll('.module[data-name]').forEach(function(btn){
         btn.addEventListener('click', function(){
           var name = btn.getAttribute('data-name');

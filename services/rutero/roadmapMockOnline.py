@@ -373,6 +373,49 @@ def api_dashboard_select():
     return jsonify({"ok": True, "name": base, "url": f"/api/dashboard/active"})
 
 
+MAX_UPLOAD_BYTES = 2 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_BYTES
+
+
+def _dashboard_error(data):
+    if not isinstance(data, dict):
+        return "el JSON debe ser un objeto"
+    dashboards = data.get("dashboards")
+    if not isinstance(dashboards, list) or not dashboards:
+        return "falta la lista 'dashboards'"
+    for dashboard in dashboards:
+        if not isinstance(dashboard, dict) or "id" not in dashboard:
+            return "cada dashboard necesita 'id'"
+        if not isinstance(dashboard.get("items", []), list):
+            return "'items' debe ser una lista"
+    return None
+
+
+@app.route("/api/dashboard/upload", methods=["POST"])
+def api_dashboard_upload():
+    """Aplica un UI JSON subido desde la web (arrastrar o selector de archivos)."""
+    global _current_dashboard_name, _current_dashboard_data
+    name = "subido"
+    if "file" in request.files:
+        upload = request.files["file"]
+        name = os.path.splitext(os.path.basename(upload.filename or ""))[0] or "subido"
+        raw = upload.read()
+    else:
+        raw = request.get_data()
+    try:
+        data = json.loads(raw.decode("utf-8"))
+    except Exception:
+        return jsonify({"error": "JSON invalido"}), 400
+    error = _dashboard_error(data)
+    if error:
+        return jsonify({"error": error}), 400
+    with _current_dashboard_lock:
+        _current_dashboard_name = name
+        _current_dashboard_data = data
+    print(f"[ui-select] dashboard subido: {name}", flush=True)
+    return jsonify({"ok": True, "name": name, "url": "/api/dashboard/active"})
+
+
 @app.route("/api/dashboard/active")
 def api_dashboard_active():
     """Devuelve el JSON de dashboard seleccionado online para la app Android."""
